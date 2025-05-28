@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef } from 'react';
 
 interface VoiceRecorderProps {
@@ -11,6 +10,12 @@ export const VoiceRecorder: React.FC<VoiceRecorderProps> = ({
   onTranscript 
 }) => {
   const recognitionRef = useRef<any>(null);
+  const isListeningRef = useRef(isListening);
+
+  // Keep ref updated with current listening state
+  useEffect(() => {
+    isListeningRef.current = isListening;
+  }, [isListening]);
 
   useEffect(() => {
     // Check if Web Speech API is available
@@ -41,7 +46,7 @@ export const VoiceRecorder: React.FC<VoiceRecorderProps> = ({
       if (finalTranscript.trim()) {
         console.log('Final transcript:', finalTranscript);
         onTranscript(finalTranscript.trim());
-        recognition.stop();
+        // Don't stop recognition here - let it continue listening
       }
     };
 
@@ -50,17 +55,34 @@ export const VoiceRecorder: React.FC<VoiceRecorderProps> = ({
       if (event.error === 'no-speech') {
         console.log('No speech detected, continuing to listen...');
       }
+      // Restart if there's an error and we should still be listening
+      if (isListeningRef.current && event.error !== 'aborted') {
+        setTimeout(() => {
+          if (recognitionRef.current && isListeningRef.current) {
+            try {
+              recognitionRef.current.start();
+            } catch (e) {
+              console.log('Recognition already running or error restarting:', e);
+            }
+          }
+        }, 1000);
+      }
     };
 
     recognition.onend = () => {
       console.log('Speech recognition ended');
-      if (isListening) {
-        // Restart recognition if still supposed to be listening
+      // Always restart if we should still be listening
+      if (isListeningRef.current) {
         setTimeout(() => {
-          if (recognitionRef.current && isListening) {
-            recognitionRef.current.start();
+          if (recognitionRef.current && isListeningRef.current) {
+            try {
+              console.log('Restarting speech recognition...');
+              recognitionRef.current.start();
+            } catch (error) {
+              console.log('Recognition already running or error restarting:', error);
+            }
           }
-        }, 100);
+        }, 500);
       }
     };
 
@@ -76,11 +98,11 @@ export const VoiceRecorder: React.FC<VoiceRecorderProps> = ({
     if (!recognition) return;
 
     if (isListening) {
-      console.log('Starting speech recognition...');
+      console.log('Starting continuous speech recognition...');
       try {
         recognition.start();
       } catch (error) {
-        console.error('Error starting recognition:', error);
+        console.log('Recognition already running or error starting:', error);
       }
     } else {
       console.log('Stopping speech recognition...');
