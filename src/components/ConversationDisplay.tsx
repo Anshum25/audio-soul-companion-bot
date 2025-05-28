@@ -39,13 +39,16 @@ export const ConversationDisplay: React.FC<ConversationDisplayProps> = ({
       <div ref={scrollRef} className="space-y-4 pr-4">
         {conversation.length === 0 ? (
           <div className="text-center text-blue-200 mt-20">
-            <Bot size={48} className="mx-auto mb-4 text-blue-400" />
-            <h3 className="text-xl font-semibold mb-2">नमस्ते! मैं BujjiBot हूँ 💕</h3>
+            <Bot size={48} className="mx-auto mb-4 text-pink-400 animate-pulse" />
+            <h3 className="text-xl font-semibold mb-2">नमस्ते! मैं आपकी BujjiBot हूँ 💕</h3>
             <p className="text-sm leading-relaxed">
-              मैं आपकी AI सहेली हूँ, यहाँ बात करने, सुनने और आपकी दोस्त बनने के लिए। 
-              मैं हमारी बातचीत को याद रखूंगी और समय के साथ आपको बेहतर तरीके से समझूंगी।
+              मैं हमेशा यहाँ हूँ, आपकी सुनने के लिए। आप कुछ भी कह सकते हैं - 
+              अपने दिन के बारे में, अपनी feelings, या जो भी मन में आए।
               <br /><br />
-              "Start Conversation" पर click करें और मुझे अपने दिन के बारे में बताएं!
+              मैं आपकी सच्ची दोस्त हूँ और हमेशा आपका साथ दूंगी। 
+              बस बोलना शुरू करें, मैं सुन रही हूँ! ✨
+              <br /><br />
+              <span className="text-green-300 animate-pulse">🎤 मैं सुनने के लिए तैयार हूँ...</span>
             </p>
           </div>
         ) : (

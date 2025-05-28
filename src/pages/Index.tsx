@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Mic, MicOff, Volume2, Heart, Brain, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -8,9 +9,9 @@ import { VoiceRecorder } from '@/components/VoiceRecorder';
 import { AIResponseHandler } from '@/components/AIResponseHandler';
 
 const Index = () => {
-  const [isListening, setIsListening] = useState(false);
+  const [isListening, setIsListening] = useState(true); // Always start listening
   const [conversation, setConversation] = useState([]);
-  const [currentMood, setCurrentMood] = useState('calm');
+  const [currentMood, setCurrentMood] = useState('listening'); // Start in listening mode
   const [isProcessing, setIsProcessing] = useState(false);
   const [userName, setUserName] = useState('');
 
@@ -26,6 +27,9 @@ const Index = () => {
     if (savedUserName) {
       setUserName(savedUserName);
     }
+
+    // Auto-start listening when app loads
+    console.log('BujjiBot is now always listening...');
   }, []);
 
   const handleVoiceInput = async (transcript: string) => {
@@ -60,7 +64,7 @@ const Index = () => {
     const updatedConversation = [...conversation, aiMessage];
     setConversation(updatedConversation);
     setIsProcessing(false);
-    setCurrentMood('happy');
+    setCurrentMood('listening'); // Return to listening after response
 
     // Save to localStorage
     localStorage.setItem('bujjibot-conversations', JSON.stringify(updatedConversation));
@@ -112,7 +116,13 @@ const Index = () => {
           <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent">
             BujjiBot
           </h1>
-          <p className="text-blue-200 text-lg">आपकी AI सहेली और साथी 💕</p>
+          <p className="text-blue-200 text-lg">आपकी हमेशा साथ रहने वाली AI सहेली 💕</p>
+          <div className="mt-2 flex items-center justify-center gap-2">
+            <div className={`w-2 h-2 rounded-full ${isListening ? 'bg-green-400 animate-pulse' : 'bg-gray-400'}`}></div>
+            <span className="text-sm text-blue-200">
+              {isListening ? 'हमेशा सुन रही हूँ...' : 'बंद है'}
+            </span>
+          </div>
         </div>
 
         {/* Main Interface */}
@@ -123,48 +133,55 @@ const Index = () => {
               <div className="text-center mb-6">
                 <h3 className="text-xl font-semibold mb-4 flex items-center justify-center gap-2">
                   <Heart className="text-pink-400" size={24} />
-                  Emotional Core
+                  मेरा दिल
                 </h3>
                 <EmotionalCore mood={currentMood} isProcessing={isProcessing} />
               </div>
 
-              {/* Voice Controls */}
+              {/* Voice Controls - Optional toggle */}
               <div className="space-y-4">
                 <Button
                   onClick={toggleListening}
                   className={`w-full h-16 text-lg font-semibold transition-all duration-300 ${
                     isListening
-                      ? 'bg-red-500 hover:bg-red-600 animate-pulse'
-                      : 'bg-blue-500 hover:bg-blue-600'
+                      ? 'bg-green-500 hover:bg-green-600'
+                      : 'bg-red-500 hover:bg-red-600'
                   }`}
                 >
                   {isListening ? (
                     <>
-                      <MicOff className="mr-2" size={24} />
-                      Stop Listening
+                      <Mic className="mr-2" size={24} />
+                      सुन रही हूँ
                     </>
                   ) : (
                     <>
-                      <Mic className="mr-2" size={24} />
-                      Start Conversation
+                      <MicOff className="mr-2" size={24} />
+                      सुनना बंद
                     </>
                   )}
                 </Button>
 
                 <div className="text-sm text-blue-200 text-center">
-                  {isListening ? 'I\'m listening... speak to me!' : 'Click to start talking with me'}
+                  {isListening ? 
+                    'मैं हमेशा यहाँ हूँ! आप कुछ भी कह सकते हैं।' : 
+                    'मुझे चालू करने के लिए ऊपर click करें'
+                  }
                 </div>
               </div>
 
               {/* Stats */}
               <div className="mt-6 space-y-2">
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-blue-200">Conversations:</span>
-                  <span className="text-white font-semibold">{conversation.length / 2 || 0}</span>
+                  <span className="text-sm text-blue-200">बातचीत:</span>
+                  <span className="text-white font-semibold">{Math.floor(conversation.length / 2) || 0}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-blue-200">Current Mood:</span>
-                  <span className="text-white font-semibold capitalize">{currentMood}</span>
+                  <span className="text-sm text-blue-200">मूड:</span>
+                  <span className="text-white font-semibold capitalize">
+                    {currentMood === 'listening' ? 'सुन रही हूँ' : 
+                     currentMood === 'thinking' ? 'सोच रही हूँ' : 
+                     currentMood === 'happy' ? 'खुश हूँ' : 'शांत हूँ'}
+                  </span>
                 </div>
               </div>
             </Card>
@@ -175,7 +192,7 @@ const Index = () => {
             <Card className="bg-white/10 backdrop-blur-sm border-white/20 p-6 h-[600px] flex flex-col">
               <div className="flex items-center gap-2 mb-4">
                 <MessageCircle className="text-blue-400" size={24} />
-                <h3 className="text-xl font-semibold">Conversation</h3>
+                <h3 className="text-xl font-semibold">हमारी बातचीत</h3>
               </div>
               
               <ConversationDisplay 
