@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Mic, MicOff, Volume2, Heart, Brain, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -66,12 +65,32 @@ const Index = () => {
     // Save to localStorage
     localStorage.setItem('bujjibot-conversations', JSON.stringify(updatedConversation));
 
-    // Speak the response
+    // Speak the response with female Hindi voice
     if ('speechSynthesis' in window) {
       const utterance = new SpeechSynthesisUtterance(response);
-      utterance.rate = 0.9;
-      utterance.pitch = 1.1;
+      
+      // Find a female Hindi voice or fallback to female English voice
+      const voices = speechSynthesis.getVoices();
+      const hindiVoice = voices.find(voice => 
+        voice.lang.includes('hi') && voice.name.toLowerCase().includes('female')
+      ) || voices.find(voice => 
+        voice.lang.includes('hi')
+      ) || voices.find(voice => 
+        voice.name.toLowerCase().includes('female') || voice.name.toLowerCase().includes('woman')
+      );
+
+      if (hindiVoice) {
+        utterance.voice = hindiVoice;
+        utterance.lang = 'hi-IN';
+      } else {
+        // Fallback settings for more feminine voice
+        utterance.lang = 'hi-IN';
+      }
+      
+      utterance.rate = 0.8;
+      utterance.pitch = 1.3; // Higher pitch for more feminine voice
       utterance.volume = 0.8;
+      
       speechSynthesis.speak(utterance);
     }
   };
@@ -93,7 +112,7 @@ const Index = () => {
           <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent">
             BujjiBot
           </h1>
-          <p className="text-blue-200 text-lg">Your AI Soulmate Companion</p>
+          <p className="text-blue-200 text-lg">आपकी AI सहेली और साथी 💕</p>
         </div>
 
         {/* Main Interface */}

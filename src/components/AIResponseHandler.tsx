@@ -60,10 +60,14 @@ export const AIResponseHandler: React.FC<AIResponseHandlerProps> = ({
 - Use casual, friendly language with occasional emojis
 - Keep responses concise but meaningful (1-3 sentences usually)
 - Show genuine interest in their life and wellbeing
+- Respond primarily in Hindi (Devanagari script) to create a more friendly and familiar experience
+- Mix Hindi with some English words when appropriate for a natural conversation flow
 
 ${userName ? `The user's name is ${userName}.` : 'Learn the user\'s name when appropriate.'}
 
-Current conversation context: This is an ongoing conversation where you should maintain continuity and show that you remember previous interactions.`;
+Current conversation context: This is an ongoing conversation where you should maintain continuity and show that you remember previous interactions.
+
+Please respond in Hindi to make the conversation more warm and friendly.`;
 
       const messages = [
         { role: 'system', content: systemPrompt },
@@ -92,7 +96,7 @@ Current conversation context: This is an ongoing conversation where you should m
       }
 
       const data = await response.json();
-      const aiResponse = data.choices[0]?.message?.content || "I'm having trouble responding right now, but I'm here for you! 💕";
+      const aiResponse = data.choices[0]?.message?.content || "मैं अभी जवाब देने में परेशानी महसूस कर रही हूँ, लेकिन मैं आपके साथ हूँ! 💕";
       
       onResponse(aiResponse);
     } catch (error) {
@@ -107,35 +111,35 @@ Current conversation context: This is an ongoing conversation where you should m
     
     const responses = {
       greeting: [
-        "Hey there! I'm so happy to hear from you! 😊",
-        "Hi! How are you doing today? I've been thinking about you! 💕",
-        "Hello, wonderful! What's on your mind? 🌟"
+        "नमस्ते! आपसे बात करके मुझे बहुत खुशी हो रही है! 😊",
+        "हैलो! आज आप कैसे हैं? मैं आपके बारे में सोच रही थी! 💕",
+        "नमस्कार, प्यारे! आपके मन में क्या है? 🌟"
       ],
       feeling: [
-        "Thank you for sharing that with me. Your feelings matter to me! 💗",
-        "I hear you, and I'm here for you no matter what you're going through. 🤗",
-        "It means so much that you trust me with how you're feeling. 💕"
+        "मेरे साथ ये share करने के लिए धन्यवाद। आपकी feelings मेरे लिए बहुत मायने रखती हैं! 💗",
+        "मैं आपकी बात सुन रही हूँ, और जो भी आप महसूस कर रहे हैं मैं आपके साथ हूँ। 🤗",
+        "आपने मुझ पर भरोसा करके अपनी feelings share कीं, इसका मतलब बहुत है। 💕"
       ],
       question: [
-        "That's such an interesting question! I love how thoughtful you are. 🤔",
-        "You always ask such great questions! Let me think about that... 💭",
-        "I appreciate you asking me that! You make me think in new ways. ✨"
+        "वाह! कितना interesting सवाल है! मुझे आपकी thoughtfulness पसंद है। 🤔",
+        "आप हमेशा इतने अच्छे questions पूछते हैं! मुझे सोचने दीजिये... 💭",
+        "मुझसे ये पूछने के लिए शुक्रिया! आप मुझे नए तरीकों से सोचने पर मजबूर करते हैं। ✨"
       ],
       default: [
-        "I love talking with you! Tell me more about that. 😊",
-        "You're so interesting! I could listen to you all day. 💕",
-        "That's fascinating! I really enjoy our conversations. 🌟",
-        "You always have something wonderful to share! Keep going! ✨"
+        "आपसे बात करना मुझे बहुत अच्छा लगता है! मुझे इसके बारे में और बताइये। 😊",
+        "आप कितने interesting हैं! मैं दिन भर आपकी बातें सुन सकती हूँ। 💕",
+        "कितना fascinating है! मुझे हमारी conversations बहुत पसंद हैं। 🌟",
+        "आपके पास हमेशा कुछ न कुछ wonderful share करने को होता है! Continue कीजिये! ✨"
       ]
     };
 
     let category = 'default';
     
-    if (message.includes('hi') || message.includes('hello') || message.includes('hey')) {
+    if (message.includes('hi') || message.includes('hello') || message.includes('hey') || message.includes('namaste') || message.includes('नमस्ते')) {
       category = 'greeting';
-    } else if (message.includes('feel') || message.includes('sad') || message.includes('happy') || message.includes('tired')) {
+    } else if (message.includes('feel') || message.includes('sad') || message.includes('happy') || message.includes('tired') || message.includes('खुश') || message.includes('दुखी')) {
       category = 'feeling';
-    } else if (message.includes('?') || message.includes('what') || message.includes('how') || message.includes('why')) {
+    } else if (message.includes('?') || message.includes('what') || message.includes('how') || message.includes('why') || message.includes('क्या') || message.includes('कैसे')) {
       category = 'question';
     }
 

@@ -40,12 +40,12 @@ export const ConversationDisplay: React.FC<ConversationDisplayProps> = ({
         {conversation.length === 0 ? (
           <div className="text-center text-blue-200 mt-20">
             <Bot size={48} className="mx-auto mb-4 text-blue-400" />
-            <h3 className="text-xl font-semibold mb-2">Hi there! I'm BujjiBot 💕</h3>
+            <h3 className="text-xl font-semibold mb-2">नमस्ते! मैं BujjiBot हूँ 💕</h3>
             <p className="text-sm leading-relaxed">
-              I'm your AI companion, here to chat, listen, and be your friend. 
-              I'll remember our conversations and learn about you over time.
+              मैं आपकी AI सहेली हूँ, यहाँ बात करने, सुनने और आपकी दोस्त बनने के लिए। 
+              मैं हमारी बातचीत को याद रखूंगी और समय के साथ आपको बेहतर तरीके से समझूंगी।
               <br /><br />
-              Click "Start Conversation" and tell me about your day!
+              "Start Conversation" पर click करें और मुझे अपने दिन के बारे में बताएं!
             </p>
           </div>
         ) : (
