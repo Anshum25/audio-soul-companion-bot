@@ -24,7 +24,7 @@ export const AIResponseHandler: React.FC<AIResponseHandlerProps> = ({
   const [apiKey, setApiKey] = useState('');
 
   useEffect(() => {
-    const savedApiKey = localStorage.getItem('bujjibot-openai-key');
+    const savedApiKey = localStorage.getItem('bujjibot-gemini-key');
     if (savedApiKey) {
       setApiKey(savedApiKey);
     }
@@ -71,25 +71,27 @@ Important: Be proactive and caring. Don't just respond - give advice, ask about 
 
 Respond in Hindi primarily, as if you're their loving Hindi-speaking girlfriend/best friend.`;
 
-      const messages = [
-        { role: 'system', content: systemPrompt },
-        ...conversation.slice(-10).map(msg => ({
-          role: msg.type === 'user' ? 'user' : 'assistant',
-          content: msg.content
-        }))
-      ];
-
-      const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${apiKey}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          model: 'gpt-4o-mini',
-          messages: messages,
-          max_tokens: 150,
-          temperature: 0.8,
+          contents: [
+            {
+              parts: [
+                {
+                  text: `${systemPrompt}\n\nUser: ${userMessage}\n\nBujjiBot:`
+                }
+              ]
+            }
+          ],
+          generationConfig: {
+            temperature: 0.8,
+            topK: 40,
+            topP: 0.95,
+            maxOutputTokens: 150,
+          }
         }),
       });
 
@@ -98,7 +100,7 @@ Respond in Hindi primarily, as if you're their loving Hindi-speaking girlfriend/
       }
 
       const data = await response.json();
-      const aiResponse = data.choices[0]?.message?.content || "मैं अभी जवाब देने में परेशानी महसूस कर रही हूँ, लेकिन मैं आपके साथ हूँ! 💕";
+      const aiResponse = data.candidates?.[0]?.content?.parts?.[0]?.text || "मैं अभी जवाब देने में परेशानी महसूस कर रही हूँ, लेकिन मैं आपके साथ हूँ! 💕";
       
       onResponse(aiResponse);
     } catch (error) {
@@ -161,14 +163,14 @@ Respond in Hindi primarily, as if you're their loving Hindi-speaking girlfriend/
     return (
       <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
         <div className="bg-white rounded-lg p-6 max-w-md mx-4">
-          <h3 className="text-lg font-semibold mb-4 text-gray-900">OpenAI API Key</h3>
+          <h3 className="text-lg font-semibold mb-4 text-gray-900">Google Gemini API Key</h3>
           <p className="text-sm text-gray-600 mb-4">
-            To enable full AI responses, please enter your OpenAI API key. 
+            To enable full AI responses, please enter your Google Gemini API key. 
             Without it, I'll use simple fallback responses.
           </p>
           <input
             type="password"
-            placeholder="sk-..."
+            placeholder="Enter your Gemini API key..."
             className="w-full p-3 border rounded-lg mb-4 text-gray-900"
             onChange={(e) => setApiKey(e.target.value)}
           />
@@ -176,7 +178,7 @@ Respond in Hindi primarily, as if you're their loving Hindi-speaking girlfriend/
             <button
               onClick={() => {
                 if (apiKey) {
-                  localStorage.setItem('bujjibot-openai-key', apiKey);
+                  localStorage.setItem('bujjibot-gemini-key', apiKey);
                 }
               }}
               className="flex-1 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
